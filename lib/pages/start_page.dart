@@ -30,7 +30,8 @@ class StartPage extends StatelessWidget {
             TextBox(
               labelText: 'Your Name',
               controller: _textController,
-              onSubmitted: (name) => context.read<AgeCalculatorCubit>().calculateAge(name: name),
+              onSubmitted: (name) =>
+                  name.isNotEmpty ? context.read<AgeCalculatorCubit>().calculateAge(name: name) : null,
             ),
             const SizedBox(height: 120),
             BlocBuilder<AgeCalculatorCubit, AgeCalculatorState>(
@@ -61,6 +62,18 @@ class StartPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 );
               },
+            ),
+            const SizedBox(height: 50),
+            ElevatedButton(
+              onPressed: () => _textController.text.isNotEmpty
+                  ? context.read<AgeCalculatorCubit>().calculateAge(name: _textController.text)
+                  : null,
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
+                ),
+              ),
+              child: const Text("Calculate", style: TextStyle(fontSize: 20)),
             ),
           ],
         ),
