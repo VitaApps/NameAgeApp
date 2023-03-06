@@ -11,8 +11,11 @@ class StartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var primaryTextTheme = Theme.of(context).primaryTextTheme;
+    // TODO(vitalij): move to theme
+    const padding = EdgeInsets.only(top: 100, left: 10, right: 10);
+    final primaryTextTheme = Theme.of(context).primaryTextTheme;
     final textStyle = primaryTextTheme.headlineMedium;
+    const backgroundColor = Color.fromRGBO(77, 90, 244, 1);
     final animationColors = [
       Colors.orange,
       Colors.white,
@@ -21,17 +24,17 @@ class StartPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(77, 90, 244, 1),
+      backgroundColor: backgroundColor,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(top: 100, left: 10, right: 10),
+        // TODO(vitalij): move to theme
+        padding: padding,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextBox(
               labelText: 'Your Name',
               controller: _textController,
-              onSubmitted: (name) =>
-                  name.isNotEmpty ? context.read<AgeCalculatorCubit>().calculateAge(name: name) : null,
+              onSubmitted: (name) => _calculateAge(context, name),
             ),
             const SizedBox(height: 120),
             BlocBuilder<AgeCalculatorCubit, AgeCalculatorState>(
@@ -40,6 +43,7 @@ class StartPage extends StatelessWidget {
                   return const CircularProgressIndicator();
                 } else if (state is LoadedState) {
                   final age = state.nameAge.age;
+
                   return AnimatedTextKit(
                     animatedTexts: [
                       ColorizeAnimatedText(
@@ -56,6 +60,7 @@ class StartPage extends StatelessWidget {
                     textAlign: TextAlign.center,
                   );
                 }
+
                 return Text(
                   "Name Age Calculator",
                   style: textStyle,
@@ -65,9 +70,7 @@ class StartPage extends StatelessWidget {
             ),
             const SizedBox(height: 50),
             ElevatedButton(
-              onPressed: () => _textController.text.isNotEmpty
-                  ? context.read<AgeCalculatorCubit>().calculateAge(name: _textController.text)
-                  : null,
+              onPressed: () => _calculateAge(context, _textController.text),
               style: ButtonStyle(
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
@@ -79,5 +82,11 @@ class StartPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _calculateAge(BuildContext context, String name) {
+    if (name.isNotEmpty) {
+      context.read<AgeCalculatorCubit>().calculateAge(name: name);
+    }
   }
 }
